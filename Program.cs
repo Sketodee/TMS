@@ -9,7 +9,10 @@ using Serilog;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 using TMS.Data;
+using TMS.HelperFunctions;
+using TMS.Interfaces;
 using TMS.Models;
+using TMS.Services;
 
 namespace TMS
 {
@@ -103,6 +106,8 @@ namespace TMS
 
             //add business logic 
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
+            builder.Services.AddSingleton<Helpers>();
+            builder.Services.AddScoped<IUserService, UserService>(); 
             builder.Services.AddHttpContextAccessor();
 
             //add authentication 

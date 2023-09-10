@@ -6,6 +6,10 @@ namespace TMS.Data
 {
     public class DataContext : IdentityDbContext<AppUser>
     {
+        public DbSet<TokenProvider> TokenProviders { get; set; }    
+
+        public DbSet<Email> Emails { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
                 
