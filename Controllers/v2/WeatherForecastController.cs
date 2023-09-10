@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace TMS.Controllers
+namespace TMS.Controllers.v2
 {
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    [Route("[controller]")]
+    [ApiVersion("2.0")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
