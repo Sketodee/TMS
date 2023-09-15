@@ -9,6 +9,6 @@ namespace TMS.Models
         public string Title { get; set; }   
         public string Description { get; set; }
         public string Status { get; set; } = NotificationStatus.Unread.ToString();
-        public string CreatedOn { get; set; } = DateTime.Now.ToString("dd/MMM/yyyy");
+        public string CreatedOn { get; set; } = DateTime.Now.ToString("dd/MMM/yyyy : HH:mm");
     }
 }

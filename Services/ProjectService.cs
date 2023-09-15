@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
 using System.Globalization;
+using System.Threading.Tasks;
 using TMS.Data;
 using TMS.DTOs;
 using TMS.HelperFunctions;
@@ -99,7 +100,7 @@ namespace TMS.Services
 
                     //send notification
                     var description = $"Task Added - {projectTask.Title} has been added to {project.Name}";
-                    await _helpers.CreateNewNotification(returnedUser.Id, "New Project Created", description);
+                    await _helpers.CreateNewNotification(returnedUser.Id, "New Task Created", description);
                 }
 
                 response.Success = true;
@@ -147,7 +148,7 @@ namespace TMS.Services
 
                     //send notification
                     var description = $"Project Deleted - {project.Name} has been deleted";
-                    await _helpers.CreateNewNotification(returnedUser.Id, "New Project Created", description);
+                    await _helpers.CreateNewNotification(returnedUser.Id, "Project Deleted", description);
 
                     response.Success = true;
                     response.Message = "Project successfully deleted";
@@ -187,7 +188,7 @@ namespace TMS.Services
 
                     //send notification
                     var description = $"Task Deleted - {task.Title} has been deleted";
-                    await _helpers.CreateNewNotification(returnedUser.Id, "New Project Created", description);
+                    await _helpers.CreateNewNotification(returnedUser.Id, "Task Deleted", description);
 
                     response.Success = true;
                     response.Message = "Task successfully deleted";
@@ -213,18 +214,18 @@ namespace TMS.Services
                 var findUser = _userManager.FindByNameAsync(getUser);
                 var returnedUser = findUser.Result;
 
+                var tasks = await _context.Tasks.Where(x => x.UserId == returnedUser.Id).ToListAsync();
+
                 DateTime today = DateTime.Today;
-                DateTime startOfWeek = today.AddDays(-(int)today.DayOfWeek);
-                DateTime endOfWeek = startOfWeek.AddDays(6);
+                DateTime startOfWeek = today.AddDays(-(int)today.DayOfWeek); // Start of the current week (Sunday)
+                DateTime endOfWeek = startOfWeek.AddDays(7).AddSeconds(-1); // End of the current week (Saturday 23:59:59)
 
-                DateTime dueDate;
 
-                var tasks =await _context.Tasks
-                    .Where(task => DateTime.TryParseExact(task.DueDate, "dd/MMM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dueDate)
-                        && dueDate >= startOfWeek && dueDate <= endOfWeek && task.UserId == returnedUser.Id)
-                    .ToListAsync();
+                var taskThisWeek = tasks.Where(log => DateTime.ParseExact(log.DueDate, "dd/MMM/yyyy", CultureInfo.InvariantCulture) >= startOfWeek
+                           && DateTime.ParseExact(log.DueDate, "dd/MMM/yyyy", CultureInfo.InvariantCulture) <= endOfWeek).OrderByDescending(log => log.DueDate).ToList();
 
-                if(tasks.Count > 0)
+
+                if (taskThisWeek.Count == 0)
                 {
                     response.Success = true;
                     response.Message = "No task for the week";
@@ -232,7 +233,7 @@ namespace TMS.Services
                 {
                     response.Success = true;
                     response.Message = "Weekly tasks successfully fetched";
-                    response.Data = tasks;
+                    response.Data = taskThisWeek;
                 }
 
             }
@@ -257,15 +258,15 @@ namespace TMS.Services
                 var returnedUser = findUser.Result;
 
                //get notifications
-               var notifications = await _context.Notifications.Where(x=> x.UserId == returnedUser.Id).OrderByDescending(x =>
-                    DateTime.ParseExact(
-                        x.CreatedOn.Replace("Sept", "Sep"), // Replace "Sept" with "Sep" in the date string
-                        "dd/MMM/yyyy : HH:mm",
-                        CultureInfo.InvariantCulture
-                    )
-                ).ToListAsync();   
+               var notifications = await _context.Notifications.Where(x=> x.UserId == returnedUser.Id).ToListAsync();
 
-                if(notifications == null)
+                var sortedNotifications = notifications
+                    .OrderByDescending(notification => DateTime.ParseExact(
+                        notification.CreatedOn.Replace("Sept", "Sep"), // Replace "Sept" with "Sep" in the date string 
+                        "dd/MMM/yyyy : HH:mm", CultureInfo.InvariantCulture))
+                    .ToList();
+
+                if (notifications == null)
                 {
                     response.Success = true;
                     response.Message = "Notification not found"; 
@@ -274,7 +275,7 @@ namespace TMS.Services
                 {
                     response.Success = true;
                     response.Message = "Notification successfully fetched";
-                    response.Data = notifications;
+                    response.Data = sortedNotifications;
                 }
             }
             catch (Exception ex)
@@ -399,24 +400,24 @@ namespace TMS.Services
             ServiceResponse response = new();
             try
             {
+                var tasks = await _context.Tasks.ToListAsync();
+
                 DateTime currentTime = DateTime.Now;
                 DateTime dueDateLimit = currentTime.AddHours(48);
 
-                DateTime dueDate;
                 //get tasks due in the 48 hours
-                var tasks = await _context.Tasks
-                  .Where(task => DateTime.TryParseExact(task.DueDate, "dd/MMM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out dueDate)
-                  && dueDate >= currentTime && dueDate <= dueDateLimit)
-                  .ToListAsync();
 
-                if(tasks.Count == 0)
+                var taskinHours = tasks.Where(log => DateTime.ParseExact(log.DueDate, "dd/MMM/yyyy", CultureInfo.InvariantCulture) >= currentTime
+                           && DateTime.ParseExact(log.DueDate, "dd/MMM/yyyy", CultureInfo.InvariantCulture) <= dueDateLimit).OrderByDescending(log => log.DueDate).ToList();
+
+                if (taskinHours.Count == 0)
                 {
                     response.Message = "No tasks found";
                     response.Success = true;
                 } 
                 else
                 {
-                    foreach (var task in tasks)
+                    foreach (var task in taskinHours)
                      {
                             var message = $"Task Due in 48Hours - {task.Title}";
                             await _helpers.CreateNewNotification(task.UserId, "Task Due in 48 Hours", message);
@@ -436,7 +437,7 @@ namespace TMS.Services
             return response;
         }
 
-        public async Task<ServiceResponse> UpdateTaskPriority(UpdateTask request)
+        public async Task<ServiceResponse> UpdateTaskPriority(UpdateTaskPriority request)
         {
             ServiceResponse response = new();
             try
@@ -456,20 +457,20 @@ namespace TMS.Services
                 }
                 else
                 {
-                    if(task.Priority == request.StatusOrPriority)
+                    if(task.Priority == request.Priority)
                     {
                         response.Success = true;
                         response.Message = "Task already has present priority";
                     }
                     else
                     {
-                        task.Priority = request.StatusOrPriority;
+                        task.Priority = request.Priority;
                         _context.Update(task);
                         await _context.SaveChangesAsync();
 
                         //send notification
                         var description = $"Task Updated - {task.Title} has been updated to {task.Priority}";
-                        await _helpers.CreateNewNotification(returnedUser.Id, "New Project Created", description);
+                        await _helpers.CreateNewNotification(returnedUser.Id, "Task Updated", description);
 
                         response.Success = true;
                         response.Message = "Task successfully updated";
@@ -485,7 +486,7 @@ namespace TMS.Services
             return response;
         }
 
-        public async Task<ServiceResponse> UpdateTaskStatus(UpdateTask request)
+        public async Task<ServiceResponse> UpdateTaskStatus(UpdateTaskStatus request)
         {
             ServiceResponse response = new();
             try
@@ -505,20 +506,20 @@ namespace TMS.Services
                 }
                 else
                 {
-                    if (task.Status == request.StatusOrPriority)
+                    if (task.Status == request.Status)
                     {
                         response.Success = true;
                         response.Message = "Task already has present status";
                     }
                     else
                     {
-                        task.Status = request.StatusOrPriority;
+                        task.Status = request.Status;
                         _context.Update(task);
                         await _context.SaveChangesAsync();
 
                         //send notification
                         var description = $"Task Updated - {task.Title} has been updated to {task.Priority}";
-                        await _helpers.CreateNewNotification(returnedUser.Id, "New Project Created", description);
+                        await _helpers.CreateNewNotification(returnedUser.Id, "Project Updated", description);
 
                         response.Success = true;
                         response.Message = "Task successfully updated";

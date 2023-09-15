@@ -117,7 +117,7 @@ namespace TMS.Controllers.v1
         /// Update task status
         /// </summary>
         [HttpPost("updatetaskstatus")]
-        public async Task<ActionResult<ServiceResponse>> UpdateTaskStatus(UpdateTask request)
+        public async Task<ActionResult<ServiceResponse>> UpdateTaskStatus(UpdateTaskStatus request)
         {
             var response = await _projectService.UpdateTaskStatus(request);
             if (!response.Success)
@@ -132,7 +132,7 @@ namespace TMS.Controllers.v1
         /// Update task priority
         /// </summary>
         [HttpPost("updatetaskpriority")]
-        public async Task<ActionResult<ServiceResponse>> UpdateTaskPriority(UpdateTask request)
+        public async Task<ActionResult<ServiceResponse>> UpdateTaskPriority(UpdateTaskPriority request)
         {
             var response = await _projectService.UpdateTaskPriority(request);
             if (!response.Success)

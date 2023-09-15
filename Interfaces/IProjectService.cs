@@ -12,8 +12,8 @@ namespace TMS.Interfaces
         Task<ServiceResponse> GetTaskByStatusOrPriority(string query);
         Task<ServiceResponse> DeleteProject(Guid query); 
         Task<ServiceResponse> DeleteTask(Guid query);  
-        Task<ServiceResponse> UpdateTaskStatus(UpdateTask request);
-        Task<ServiceResponse> UpdateTaskPriority(UpdateTask request);
+        Task<ServiceResponse> UpdateTaskStatus(UpdateTaskStatus request);
+        Task<ServiceResponse> UpdateTaskPriority(UpdateTaskPriority request);
         Task<ServiceResponse> GetDueTasksByWeek();
         Task<ServiceResponse> GetNotifications(); 
         Task<ServiceResponse> ReadNotification(Guid id);
