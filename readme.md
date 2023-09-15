@@ -23,9 +23,10 @@ Follow these steps to set up the project locally:
    cd TMS
    ```
 
-   Change connection string
+2. SetUp Local SSMS Database
+   - Change connection string
    
-   Run migration for database
+   - Run migration for database
    
    ```bash
    dotnet ef migrations add InitialCreate
