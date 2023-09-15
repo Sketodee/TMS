@@ -10,6 +10,6 @@ namespace TMS.DTOs
         [Required(ErrorMessage = "Project Description is required")]
         public string Description { get; set; }
 
-        public ICollection<ProjectTaskDto>? Tasks { get; set; }
+        //public ICollection<ProjectTaskDto>? Tasks { get; set; }
     }
 }

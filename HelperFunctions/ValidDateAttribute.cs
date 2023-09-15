@@ -7,7 +7,7 @@ namespace TMS.HelperFunctions
     {
         public ValidDateAttribute()
         {
-            ErrorMessage = "Date must be in present ot future and in dd/MMM/yyyy format"; 
+            ErrorMessage = "Date must be a future date and in dd/MMM/yyyy format"; 
         }
         public override bool IsValid(object value)
         {
@@ -20,7 +20,7 @@ namespace TMS.HelperFunctions
             string appointmentDateStr = (string)value;
 
             // Specify the expected date format
-            string expectedFormat = "dd/MMM/yyyy : HH:mm";
+            string expectedFormat = "dd/MMM/yyyy";
 
             if (DateTime.TryParseExact(appointmentDateStr, expectedFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
             {

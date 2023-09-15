@@ -117,7 +117,7 @@ namespace TMS
 
             //add business logic 
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
-            builder.Services.AddSingleton<Helpers>();
+            builder.Services.AddScoped<Helpers>();
             builder.Services.AddScoped<IUserService, UserService>(); 
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddHttpContextAccessor();

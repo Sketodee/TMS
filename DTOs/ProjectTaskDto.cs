@@ -5,8 +5,6 @@ namespace TMS.DTOs
 {
     public class ProjectTaskDto
     {
-        [Required(ErrorMessage ="Project Id is required")]
-        public Guid ProjectId { get; set; } 
         [Required (ErrorMessage ="Task Title is required")]
         public string Title { get; set; }
 

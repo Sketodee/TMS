@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace TMS.Models
 {
     public class ProjectTask
     {
         public Guid Id { get; set; }  = Guid.NewGuid();
-
+        [JsonIgnore]
+        [IgnoreDataMember]
         public Project? Project { get; set; }
 
         public Guid ProjectId { get; set; }

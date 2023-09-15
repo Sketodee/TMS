@@ -8,8 +8,8 @@ namespace TMS
     {
         public AutoMapperProfile()
         {
-            CreateMap<ProjectTaskDto, ProjectTask>(); 
-            CreateMap<ProjectTask, ProjectTaskDto>(); 
+            CreateMap<AddProjectTaskDto, ProjectTask>(); 
+            CreateMap<ProjectTask, AddProjectTaskDto>(); 
 
             CreateMap<ProjectDto, Project>();   
             CreateMap<Project, ProjectDto>();   

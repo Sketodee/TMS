@@ -57,7 +57,7 @@ namespace TMS.Controllers.v1
         /// Add Task to an existing Project
         /// </summary>
         [HttpPost("addtasktoproject")]
-        public async Task<ActionResult<ServiceResponse>> AddTaskToProject(ProjectTaskDto request)
+        public async Task<ActionResult<ServiceResponse>> AddTaskToProject(AddProjectTaskDto request)
         {
             var response = await _projectService.AddTaskToProject(request);
             if (!response.Success)
@@ -72,7 +72,7 @@ namespace TMS.Controllers.v1
         /// Get Task by status or by priority
         /// </summary>
         [HttpGet("gettaskbystatusorpriority")]
-        public async Task<ActionResult<ServiceResponse>> GetTaskByStatusOrPriority([Status] [Priority] string query)
+        public async Task<ActionResult<ServiceResponse>> GetTaskByStatusOrPriority([StatusAndPriority] string query)
         {
             var response = await _projectService.GetTaskByStatusOrPriority(query);
             if (!response.Success)
@@ -176,7 +176,7 @@ namespace TMS.Controllers.v1
         /// <summary>
         /// Change a notification status to read
         /// </summary>
-        [HttpPost]
+        [HttpPost("readnotifications")]
         public async Task<ActionResult<ServiceResponse>> ReadNotification(Guid id)
         {
             var response = await _projectService.ReadNotification(id);
@@ -191,7 +191,7 @@ namespace TMS.Controllers.v1
         /// <summary>
         /// CRON Job to send notifications about tasks expiring in 48 hours
         /// </summary>
-        [HttpPost]
+        [HttpPost("runbackgroundnotifications")]
         public async Task<ActionResult<ServiceResponse>> RunBackgroundNotifications()
         {
             var response = await _projectService.RunBackgroundNotifications();

@@ -70,7 +70,7 @@ namespace TMS.Services
             return response; 
         }
 
-        public async Task<ServiceResponse> AddTaskToProject(ProjectTaskDto request)
+        public async Task<ServiceResponse> AddTaskToProject(AddProjectTaskDto request)
         {
             ServiceResponse response = new();
             List<string> errors = new List<string>();

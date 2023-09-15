@@ -8,7 +8,7 @@ namespace TMS.Interfaces
     {
         Task<ServiceResponse> AddProject(ProjectDto request);
         Task<ServiceResponse> GetProjects();
-        Task<ServiceResponse> AddTaskToProject(ProjectTaskDto request);
+        Task<ServiceResponse> AddTaskToProject(AddProjectTaskDto request);
         Task<ServiceResponse> GetTaskByStatusOrPriority(string query);
         Task<ServiceResponse> DeleteProject(Guid query); 
         Task<ServiceResponse> DeleteTask(Guid query);  
