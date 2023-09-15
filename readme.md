@@ -18,10 +18,23 @@ Follow these steps to set up the project locally:
    ```bash
    git clone https://github.com/Sketodee/TMS.git
    ```
-![download](https://github.com/Sketodee/TMS/assets/66252348/867595a2-300d-4a02-ac56-da643e0b1e4f)
 
    ```bash 
    cd TMS
+   ```
+
+   Change connection string
+   
+   Run migration for database
+   
+   ```bash
+   dotnet ef migrations add InitialCreate
+   ```
+
+   Update Database
+
+   ```bash
+   dotnet add migration
    ```
 
    ```bash 
