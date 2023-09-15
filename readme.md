@@ -18,6 +18,7 @@ Follow these steps to set up the project locally:
    ```bash
    git clone https://github.com/Sketodee/TMS.git
    ```
+![download](https://github.com/Sketodee/TMS/assets/66252348/867595a2-300d-4a02-ac56-da643e0b1e4f)
 
    ```bash 
    cd TMS
@@ -37,6 +38,7 @@ To run the api locally
 
 ```bash
 dotnet run 
+```
 
 The API Endpoints will be accessible at https://localhost:44368/swagger/index.html
 
