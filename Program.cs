@@ -1,3 +1,4 @@
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -7,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.Filters;
+using System.Reflection;
 using System.Text;
 using TMS.Data;
 using TMS.HelperFunctions;
@@ -38,7 +40,13 @@ namespace TMS
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen((c =>
+            {
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            }));
 
             //for Entity Framework 
             builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
@@ -53,6 +61,9 @@ namespace TMS
                 build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
             }));
 
+            //Add hangfire for email CRON job
+            builder.Services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddHangfireServer();
 
             //add versioning for API
             builder.Services.AddApiVersioning(opt =>
@@ -108,6 +119,7 @@ namespace TMS
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
             builder.Services.AddSingleton<Helpers>();
             builder.Services.AddScoped<IUserService, UserService>(); 
+            builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddHttpContextAccessor();
 
             //add authentication 
@@ -161,6 +173,8 @@ namespace TMS
             });
 
             app.UseCors("corspolicy");
+
+            app.UseHangfireDashboard("/mydashboard");
 
             app.UseHttpsRedirection();
 

@@ -3,16 +3,20 @@ using Microsoft.Extensions.Configuration;
 using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using TMS.Data;
+using TMS.Models;
 
 namespace TMS.HelperFunctions
 {
     public class Helpers
     {
         private readonly IConfiguration _configuration;
+        private readonly DataContext _context;
 
-        public Helpers(IConfiguration configuration)
+        public Helpers(IConfiguration configuration, DataContext context)
         {
             _configuration = configuration;
+            _context = context;
         }
 
         public async Task SendEmailAsync(string template, string username, string userEmail, string? message, string subject)
@@ -53,6 +57,17 @@ namespace TMS.HelperFunctions
             Random random = new Random();
             string randomNumber = random.Next(100000, 999999).ToString();
             return randomNumber;
+        }
+
+        public async Task CreateNewNotification (string UserId, string title, string description )
+        {
+            var notification = new Notification
+            {
+                UserId = UserId, Title = title, Description = description   
+            };
+
+            _context.Notifications.Add( notification ); 
+            await _context.SaveChangesAsync();  
         }
     }
 }

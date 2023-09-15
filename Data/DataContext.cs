@@ -10,6 +10,12 @@ namespace TMS.Data
 
         public DbSet<Email> Emails { get; set; }
 
+        public DbSet<Project> Projects { get; set; }
+
+        public DbSet<ProjectTask> Tasks { get; set; }
+
+        public DbSet<Notification> Notifications { get; set; }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
                 

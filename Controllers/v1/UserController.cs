@@ -18,6 +18,9 @@ namespace TMS.Controllers.v1
             _userService = userService;
         }
 
+        /// <summary>
+        /// Sign up new user
+        /// </summary>
         [HttpPost("signup")]
         public async Task<ActionResult<ServiceResponse>> SignUp (SignUpRequest request)
         {
@@ -30,6 +33,9 @@ namespace TMS.Controllers.v1
             return Ok(response);
         }
 
+        /// <summary>
+        /// Login
+        /// </summary>
         [HttpPost("login")]
         public async Task<ActionResult<ServiceResponse>> Login(LoginRequest request)
         {
@@ -42,6 +48,9 @@ namespace TMS.Controllers.v1
             return Ok(response);
         }
 
+        /// <summary>
+        /// Forgot Password
+        /// </summary>
         [HttpPost("forgotpassword")]
         public async Task<ActionResult<ServiceResponse>> ForgotPassword (OtpRequest request)
         {
@@ -54,6 +63,9 @@ namespace TMS.Controllers.v1
             return Ok(response);
         }
 
+        /// <summary>
+        /// Reset Password
+        /// </summary>
         [HttpPost("resetpassword")]
         public async Task<ActionResult<ServiceResponse>> ResetPassword(PasswordResetRequest request)
         {
