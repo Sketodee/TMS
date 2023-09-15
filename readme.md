@@ -17,12 +17,15 @@ Follow these steps to set up the project locally:
 
    ```bash
    git clone https://github.com/Sketodee/TMS.git
+   ```
 
    ```bash 
-   cd TMS 
+   cd TMS
+   ```
 
    ```bash 
-   dotnet run 
+   dotnet run
+   ```
 
 # Usage 
 
